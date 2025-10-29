@@ -30,14 +30,17 @@ def read_input(file_path, as_sets = True):
             R = set(R)
             E = set(E)
 
-        return n, m, r, V, R, E
+        return n, m, r, s, t, V, R, E
 
 class Graph:
     def __init__(self, file_path):
-        n, m, r, V, R, E = read_input(file_path)
+        n, m, r, s, t, V, R, E = read_input(file_path)
+        self.type = file_path.split('-')[0]
         self.n = n
         self.m = m
         self.r = r
+        self.s = s
+        self.t = t
         self.V = V
         self.R = R
         self.E = E
