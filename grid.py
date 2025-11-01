@@ -5,7 +5,7 @@ import os
 
 DATA_DIR = os.path.join("red-scare", "data")
 
-OUT_FILE = os.path.join("red-scare","results", "grids_some_results.txt")
+#OUT_FILE = os.path.join("red-scare","results", "grids_some_results.txt")
 
 # NONE BFS dont take the edge if in R and is neither start or end 
 def BFS_None(g: Graph) -> int:
@@ -78,4 +78,4 @@ for path in files:
 #with open(OUT_FILE, "w") as f:
     #f.write("\n".join(results))
 
-#print(f"\n Results saved to {OUT_FILE}")
+#print(f"\n✅ Results saved to {OUT_FILE}")
