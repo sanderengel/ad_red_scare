@@ -1,0 +1,12 @@
+grid-10-0.txt: 49
+grid-10-1.txt: 29
+grid-10-2.txt: -1
+grid-25-0.txt: 324
+grid-25-1.txt: 123
+grid-25-2.txt: -1
+grid-5-0.txt: 14
+grid-5-1.txt: 8
+grid-5-2.txt: -1
+grid-50-0.txt: 1249
+grid-50-1.txt: 521
+grid-50-2.txt: -1

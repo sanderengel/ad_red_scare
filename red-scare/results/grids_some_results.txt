@@ -1,0 +1,12 @@
+grid-10-0.txt: True
+grid-10-1.txt: True
+grid-10-2.txt: True
+grid-25-0.txt: True
+grid-25-1.txt: True
+grid-25-2.txt: True
+grid-5-0.txt: True
+grid-5-1.txt: True
+grid-5-2.txt: True
+grid-50-0.txt: True
+grid-50-1.txt: True
+grid-50-2.txt: True
