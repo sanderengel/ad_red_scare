@@ -2,10 +2,11 @@ from collections import deque, defaultdict
 from utils import Graph
 import sys
 import os
+import heapq
 
 DATA_DIR = os.path.join("red-scare", "data")
 
-OUT_FILE = os.path.join("red-scare","results", "grids_some_results.txt")
+#OUT_FILE = os.path.join("red-scare","results", "grids_few_results.txt")
 
 # NONE BFS dont take the edge if in R and is neither start or end 
 def BFS_None(g: Graph) -> int:
@@ -62,15 +63,48 @@ def BFS_Some(g: Graph) -> bool:
 
 
 
+# FEW using dijkstra red nodes have added cost +1 
+def Few_dijkstra(g: Graph) -> int:
+    adj = defaultdict(list)
+    for u, v in g.E:
+        adj[u].append(v)
+
+    INF = 10**9
+    dist = {v: INF for v in g.V}
+    start_cost = 1 if g.s in g.R else 0
+    dist[g.s] = start_cost
+
+    pq = [(start_cost, g.s)]  # (total_reds_so_far, node)
+
+    while pq:
+        cost_u, u = heapq.heappop(pq)
+        if cost_u > dist[u]:
+            continue
+
+        if u == g.t:
+            return cost_u  
+
+        for v in adj[u]:
+            add = 1 if v in g.R else 0
+            cand = cost_u + add
+            if cand < dist[v]:
+                dist[v] = cand
+                heapq.heappush(pq, (cand, v))
+
+    # unreachable
+    return -1
+
+
+
 files = []
 for name in os.listdir(DATA_DIR):
-    if name.startswith("common") and name.endswith(".txt"):
+    if name.startswith("grid") and name.endswith(".txt"):
         files.append(os.path.join(DATA_DIR, name))
 files.sort()
 results = []
 for path in files:
     g = Graph(path)
-    ans = BFS_Some(g)
+    ans = BFS_None(g)
     line = f"{os.path.basename(path)}: {ans}"
     print(line)
     results.append(line)
