@@ -9,7 +9,6 @@ from word_graphs import word_graphs
 
 DATA_PATH = 'red-scare/data'
 file_paths = [os.path.join(DATA_PATH, f) for f in os.listdir(DATA_PATH) if os.path.isfile(os.path.join(DATA_PATH, f))]
-print(file_paths)
 
 results = []
 

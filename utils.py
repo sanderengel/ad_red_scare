@@ -35,7 +35,7 @@ def read_input(file_path, as_sets = True):
 class Graph:
     def __init__(self, file_path):
         n, m, r, s, t, V, R, E = read_input(file_path)
-        self.type = file_path.split('-')[0]
+        self.type = file_path.split('/')[2].split('-')[0]
         self.n = n
         self.m = m
         self.r = r
