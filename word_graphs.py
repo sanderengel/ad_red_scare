@@ -1,6 +1,6 @@
 from algorithms import *
 
-def grid(G):
+def word_graphs(G):
     alternate_result = None # Not solved yet
     few_result = solve_few_dijkstra(G)
     many_result = None # Not solved yet

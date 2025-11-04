@@ -16,10 +16,13 @@ for file_path in file_paths:
     if file_path.endswith('.txt'):
         G = Graph(file_path)
 
-        if G.type == 'rusty':
-            # TODO: do something, pass G to the function
-            # result = something
-            pass
+
+        if G.type in ['rusty', 'common']:
+            if G.instance_name != 'common-2-20':
+                continue
+            print('Edges:', G.E)
+            result = word_graphs(G)
+            results.append(result)
 
         # elif G.type == ....
 
@@ -27,4 +30,6 @@ for file_path in file_paths:
 
         # results.append(result)
 
+for result in results:
+    print(result)
 results_df = pd.DataFrame(results)
