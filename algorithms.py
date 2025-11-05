@@ -113,3 +113,37 @@ def solve_few_dijkstra(G: Graph) -> int:
 
     # unreachable
     return -1
+
+def build_adjacency(g: Graph):
+    adj = defaultdict(list)
+    seen = defaultdict(set)
+    for u, v in g.E:
+        if u == v:
+            continue
+        if v not in seen[u]:
+            adj[u].append(v)
+            seen[u].add(v)
+        if u not in seen[v]:
+            adj[v].append(u)
+            seen[v].add(u)
+    return adj
+
+def solve_alternate(g: Graph) -> bool:
+    adj = build_adjacency(g)
+    start_red = g.s in g.R
+    q = deque([(g.s, start_red)])
+    seen = {(g.s, start_red)}
+    while q:
+        u, last_red = q.popleft()
+        if u == g.t:
+            return True
+        for v in adj[u]:
+            v_red = v in g.R
+            if v_red == last_red:
+                continue
+            state = (v, v_red)
+            if state in seen:
+                continue
+            seen.add(state)
+            q.append(state)
+    return False
