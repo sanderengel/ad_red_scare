@@ -113,3 +113,44 @@ def solve_few_dijkstra(G: Graph) -> int:
 
     # unreachable
     return -1
+
+
+def solve_few_dijkstra_pairweights(G) -> int:
+    """
+    Dijkstra where each edge (u -> v) has weight:
+        w(u,v) = (u is red) + (v is red)
+               = 2 if both red, 1 if exactly one red, 0 if both black.
+
+    Returns:
+        int: Minimum total edge-weight from s to t, or -1 if unreachable.
+    """
+    adj = defaultdict(list)
+    for u, v in G.E:
+        adj[u].append(v)
+
+    def edge_weight(u, v) -> int:
+        return (1 if G.is_red(u) else 0) + (1 if G.is_red(v) else 0)
+
+    INF = float('inf')
+    dist = {v: INF for v in G.V}
+    dist[G.s] = 0
+
+    pq = [(0, G.s)]  # (cost_so_far, node)
+
+    while pq:
+        cost_u, u = heapq.heappop(pq)
+        if cost_u > dist[u]:
+            continue
+
+        if u == G.t:
+            return cost_u
+
+        for v in adj[u]:
+            w = edge_weight(u, v)
+            cand = cost_u + w
+            if cand < dist[v]:
+                dist[v] = cand
+                heapq.heappush(pq, (cand, v))
+
+    return -1
+
