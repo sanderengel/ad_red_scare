@@ -1,7 +1,8 @@
+import os
 def read_input(file_path, as_sets = True):
     with open(file_path, 'r') as infile:
-        n, m, r = map(int, infile.readline().split()) # Read the first line and unpack n, m, r
-        s, t = infile.readline().split() # Read the second line and unpack s, t
+        n, m, r = map(int, infile.readline().split()) 
+        s, t = infile.readline().split()
         
         vertex_lines = [infile.readline().strip() for _ in range(n)]
         V = []
@@ -32,10 +33,12 @@ def read_input(file_path, as_sets = True):
 
         return n, m, r, s, t, V, R, E
 
+
 class Graph:
     def __init__(self, file_path):
         n, m, r, s, t, V, R, E = read_input(file_path)
-        self.instance_name = file_path.split('/')[2].split('.')[0]
+        filename = os.path.basename(file_path)
+        self.instance_name = os.path.splitext(filename)[0]
         self.type = self.instance_name.split('-')[0]
         self.n = n
         self.m = m
