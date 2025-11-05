@@ -74,28 +74,27 @@ def solve_some_bfs(G: Graph) -> bool:
     # exhausted search, no s→t path that went through a red
     return False
 
-
-def solve_few_dijkstra_pairweights(G) -> int:
+def solve_few_dijkstra(G: Graph) -> int:
     """
-    Dijkstra where each edge (u -> v) has weight:
-        w(u,v) = (u is red) + (v is red)
-               = 2 if both red, 1 if exactly one red, 0 if both black.
+    Standard Dijkstra solver for the Few problem.
+
+    Args:
+        G (Graph): utils.Graph object.
 
     Returns:
-        int: Minimum total edge-weight from s to t, or -1 if unreachable.
+        int: The minimum number of red vertices on any path from s to t.
+                Returns -1 if no such path exists.
     """
     adj = defaultdict(list)
     for u, v in G.E:
         adj[u].append(v)
 
-    def edge_weight(u, v) -> int:
-        return (1 if G.is_red(u) else 0) + (1 if G.is_red(v) else 0)
-
     INF = float('inf')
     dist = {v: INF for v in G.V}
-    dist[G.s] = 0
+    start_cost = 1 if G.is_red(G.s) else 0
+    dist[G.s] = start_cost
 
-    pq = [(0, G.s)]  # (cost_so_far, node)
+    pq = [(start_cost, G.s)]  # (total_reds_so_far, node)
 
     while pq:
         cost_u, u = heapq.heappop(pq)
@@ -103,15 +102,14 @@ def solve_few_dijkstra_pairweights(G) -> int:
             continue
 
         if u == G.t:
-            return cost_u
+            return cost_u  
 
         for v in adj[u]:
-            w = edge_weight(u, v)
-            cand = cost_u + w
+            add = 1 if v in G.R else 0
+            cand = cost_u + add
             if cand < dist[v]:
                 dist[v] = cand
                 heapq.heappush(pq, (cand, v))
 
+    # unreachable
     return -1
-
->>>>>>> 8faad9f37bf1c8452304de6eb9c4bc197c86a94d
