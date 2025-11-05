@@ -1,7 +1,7 @@
 from algorithms import *
 
 def word_graph(G):
-    alternate_result = None # Not solved yet
+    alternate_result = solve_alternate(G)
     few_result = solve_few_dijkstra(G)
     many_result = None # Not solved yet
     none_result = solve_none_bfs(G)
