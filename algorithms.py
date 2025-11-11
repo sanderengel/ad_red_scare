@@ -74,44 +74,35 @@ def solve_some_bfs(G: Graph) -> bool:
     # exhausted search, no s→t path that went through a red
     return False
 
-def solve_few_dijkstra_pairweights(G) -> int:
-    """
-    Dijkstra where each edge (u -> v) has weight:
-        w(u,v) = (u is red) + (v is red)
-               = 2 if both red, 1 if exactly one red, 0 if both black.
-
-    Returns:
-        int: Minimum total edge-weight from s to t, or -1 if unreachable.
-    """
-    adj = defaultdict(list)
+# Cost 1 if arriving at red node
+def solve_few(G):
+    adjacency = defaultdict(list)
     for u, v in G.E:
-        adj[u].append(v)
+        adjacency[u].append(v)
 
-    def edge_weight(u, v) -> int:
-        return (1 if G.is_red(u) else 0) + (1 if G.is_red(v) else 0)
+    INF = 10**18
+    distance = {v: INF for v in G.V}
+    distance[G.s] = 1 if G.is_red(G.s) else 0
 
-    INF = float('inf')
-    dist = {v: INF for v in G.V}
-    dist[G.s] = 0
+    # Run Dijkstra's - using minheap
+    priority_queue = [(distance[G.s], G.s)]
 
-    pq = [(0, G.s)]  # (cost_so_far, node)
-
-    while pq:
-        cost_u, u = heapq.heappop(pq)
-        if cost_u > dist[u]:
+    while priority_queue:
+        current_cost, u = heapq.heappop(priority_queue)
+        if current_cost != distance[u]: # detect old distance
             continue
 
         if u == G.t:
-            return cost_u
+            return current_cost
+        
+        # try to look for a better distance
+        for v in adjacency[u]:
+            new_cost = current_cost + (1 if G.is_red(v) else 0)
+            if new_cost < distance[v]: # found better
+                distance[v] = new_cost
+                heapq.heappush(priority_queue, (new_cost, v))
 
-        for v in adj[u]:
-            w = edge_weight(u, v)
-            cand = cost_u + w
-            if cand < dist[v]:
-                dist[v] = cand
-                heapq.heappush(pq, (cand, v))
-
-    return -1
+    return -1  # end node unreachable
 
 def build_adjacency(g: Graph):
     adj = defaultdict(list)

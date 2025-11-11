@@ -2,7 +2,7 @@ from algorithms import *
 
 def word_graph(G):
     alternate_result = solve_alternate(G)
-    few_result = solve_few_dijkstra_pairweights(G)
+    few_result = solve_few(G)
     many_result = None # Not solved yet
     none_result = solve_none_bfs(G)
     some_result = solve_some_bfs(G)
