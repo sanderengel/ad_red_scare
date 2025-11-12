@@ -2,8 +2,7 @@ import os
 import pandas as pd
 
 from utils import Graph
-from word_graph import word_graph
-from grid import grid
+from algorithms import *
 
 DATA_PATH = 'red-scare/data'
 file_paths = [os.path.join(DATA_PATH, f) for f in os.listdir(DATA_PATH) 
@@ -22,57 +21,27 @@ print("="*80)
 for idx, file_path in enumerate(file_paths, 1):
     try:
         G = Graph(file_path)
-        print(f"[{idx}/{len(file_paths)}] Processing {G.instance_name}... (n={G.n}, m={G.m}, r={G.r})", end=" ")
+        print(f"[{idx}/{len(file_paths)}] Processing {G.instance_name}... (n={G.n}, m={G.m}, r={G.r})")
         
-        # Word graphs (rusty, common, bht)
-        if G.type in ['rusty', 'common', 'bht']:
-            result = word_graph(G)
-            results.append(result)
-            print("✓")
-        
-        # Grid graphs
-        elif G.type == 'grid':
-            result = grid(G)
-            results.append(result)
-            print("✓")
-        
-        # Small world graphs
-        elif G.type == 'smallworld':
-            result = word_graph(G)
-            results.append(result)
-            print("✓")
-        
-        # Wall graphs
-        elif G.type == 'wall':
-            result = word_graph(G)
-            results.append(result)
-            print("✓")
-        
-        # Increase graphs
-        elif G.type == 'increase':
-            result = word_graph(G) 
-            results.append(result)
-            print("✓")
-        
-        # Ski graphs
-        elif G.type == 'ski':
-            result = word_graph(G) 
-            results.append(result)
-            print("✓")
-        
-        # GNM random graphs
-        elif G.type == 'gnm':
-            result = word_graph(G) 
-            results.append(result)
-            print("✓")
-        
-        else:
-            result = word_graph(G)  
-            results.append(result)
-            print("✓")
+        alternate_result = solve_alternate(G)
+        few_result = solve_few(G)
+        many_result = None # Not solved yet
+        none_result = solve_none_bfs(G)
+        some_result = solve_some_bfs(G)
+        result = {
+            'instance_name': G.instance_name,
+            'n': G.n,
+            'A': alternate_result,
+            'F': few_result,
+            'M': many_result,
+            'N': none_result,
+            'S': some_result
+        }
+
+        results.append(result)
             
     except Exception as e:
-        print(f"✗ Error: {e}")
+        print(f"Error: {e}")
         continue
 
 # Print results
