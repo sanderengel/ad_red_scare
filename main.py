@@ -49,6 +49,9 @@ print("\n" + "="*80)
 print(f"Processed {len(results)} graphs")
 print("="*80 + "\n")
 
+# Sort results
+results = sorted(results, key = lambda x: x['instance_name'])
+
 for result in results:
     print(f"{result['instance_name']:30} | N={result['N'] or 'N/A':>4} | S={result['S'] or 'N/A':>5} | "
           f"F={result['F'] or 'N/A':>4} | M={result['M'] or 'N/A':>4} | A={result['A'] or 'N/A':>5}")
