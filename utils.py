@@ -59,18 +59,11 @@ class Graph:
         self.adj = self._build_adjacency()
 
     def _build_adjacency(self):
-        adj = defaultdict(list)
-        seen = defaultdict(set)
-        for u, v in self.E:
-            if u == v:
-                continue
-            if v not in seen[u]:
-                adj[u].append(v)
-                seen[u].add(v)
-            if u not in seen[v]:
-                adj[v].append(u)
-                seen[v].add(u)
-        return adj
+            # Must use E to build adjacency list
+            adj = defaultdict(set)
+            for u, v in self.E:
+                adj[u].add(v)
+            return adj
 
     def has_edge(self, u, v):
         return (u, v) in self.E
