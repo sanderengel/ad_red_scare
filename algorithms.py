@@ -2,6 +2,20 @@ import heapq
 from collections import deque, defaultdict
 from utils import Graph
 
+def _build_adjacency(G: Graph):
+    adj = defaultdict(list)
+    seen = defaultdict(set)
+    for u, v in G.E:
+        if u == v:
+            continue
+        if v not in seen[u]:
+            adj[u].append(v)
+            seen[u].add(v)
+        if u not in seen[v]:
+            adj[v].append(u)
+            seen[v].add(u)
+    return adj
+
 def solve_none_bfs(G: Graph) -> int:
     """
     Standard BFS solver for the None problem.
@@ -14,9 +28,7 @@ def solve_none_bfs(G: Graph) -> int:
                 Returns -1 if no such path exists.
     """
     # Build adj dict
-    adj = defaultdict(list)
-    for u, v in G.E:
-        adj[u].append(v)
+    adj = _build_adjacency(G)
 
     # Build queue and distance dict
     q = deque([G.s])
@@ -46,9 +58,7 @@ def solve_some_bfs(G: Graph) -> bool:
         bool: True if any path exists passing through at least one red vertex,
                 else False.
     """
-    adj = defaultdict(list)
-    for u, v in G.E:
-        adj[u].append(v)
+    adj = _build_adjacency(G)
 
     start_seen_red = G.is_red(G.s)
 
@@ -76,9 +86,7 @@ def solve_some_bfs(G: Graph) -> bool:
 
 # Cost 1 if arriving at red node
 def solve_few(G):
-    adjacency = defaultdict(list)
-    for u, v in G.E:
-        adjacency[u].append(v)
+    adj = _build_adjacency(G)
 
     INF = 10**18
     distance = {v: INF for v in G.V}
@@ -96,7 +104,7 @@ def solve_few(G):
             return current_cost
         
         # try to look for a better distance
-        for v in adjacency[u]:
+        for v in adj[u]:
             new_cost = current_cost + (1 if G.is_red(v) else 0)
             if new_cost < distance[v]: # found better
                 distance[v] = new_cost
@@ -104,31 +112,17 @@ def solve_few(G):
 
     return -1  # end node unreachable
 
-def build_adjacency(g: Graph):
-    adj = defaultdict(list)
-    seen = defaultdict(set)
-    for u, v in g.E:
-        if u == v:
-            continue
-        if v not in seen[u]:
-            adj[u].append(v)
-            seen[u].add(v)
-        if u not in seen[v]:
-            adj[v].append(u)
-            seen[v].add(u)
-    return adj
-
-def solve_alternate(g: Graph) -> bool:
-    adj = build_adjacency(g)
-    start_red = g.s in g.R
-    q = deque([(g.s, start_red)])
-    seen = {(g.s, start_red)}
+def solve_alternate(G: Graph) -> bool:
+    adj = _build_adjacency(G)
+    start_red = G.s in G.R
+    q = deque([(G.s, start_red)])
+    seen = {(G.s, start_red)}
     while q:
         u, last_red = q.popleft()
-        if u == g.t:
+        if u == G.t:
             return True
         for v in adj[u]:
-            v_red = v in g.R
+            v_red = v in G.R
             if v_red == last_red:
                 continue
             state = (v, v_red)
