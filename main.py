@@ -25,7 +25,7 @@ for idx, file_path in enumerate(file_paths, 1):
         
         alternate_result = solve_alternate(G)
         few_result = solve_few(G)
-        many_result = None # Not solved yet
+        many_result = solve_many(G)
         none_result = solve_none_bfs(G)
         some_result = solve_some_bfs(G)
         result = {

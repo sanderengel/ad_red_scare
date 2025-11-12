@@ -1,5 +1,6 @@
 import heapq
-from collections import deque, defaultdict
+from collections import deque
+from detect_tree import is_tree, is_DAG
 from utils import Graph
 
 def solve_none_bfs(G: Graph) -> int:
@@ -109,3 +110,13 @@ def solve_alternate(G: Graph) -> bool:
             seen.add(state)
             q.append(state)
     return False
+
+def _kahn_topological_sort(G):
+    pass
+
+def solve_many(G: Graph) -> int | str:
+    # Check if not a DAG
+    if not is_DAG(G): # We cannot solve these
+        return '?'
+
+    # Compute topological order using kahn's algorithm
