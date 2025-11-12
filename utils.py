@@ -1,4 +1,6 @@
 import os
+from collections import defaultdict
+
 def read_input(file_path, as_sets = True):
     with open(file_path, 'r') as infile:
         n, m, r = map(int, infile.readline().split()) 
@@ -38,8 +40,12 @@ class Graph:
     def __init__(self, file_path):
         n, m, r, s, t, V, R, E = read_input(file_path)
         filename = os.path.basename(file_path)
+
+        # Define instance name and type
         self.instance_name = os.path.splitext(filename)[0]
         self.type = self.instance_name.split('-')[0]
+
+        # Define standard attributes
         self.n = n
         self.m = m
         self.r = r
@@ -48,6 +54,23 @@ class Graph:
         self.V = V
         self.R = R
         self.E = E
+
+        # Build adjacency list
+        self.adj = self._build_adjacency()
+
+    def _build_adjacency(self):
+        adj = defaultdict(list)
+        seen = defaultdict(set)
+        for u, v in self.E:
+            if u == v:
+                continue
+            if v not in seen[u]:
+                adj[u].append(v)
+                seen[u].add(v)
+            if u not in seen[v]:
+                adj[v].append(u)
+                seen[v].add(u)
+        return adj
 
     def has_edge(self, u, v):
         return (u, v) in self.E
