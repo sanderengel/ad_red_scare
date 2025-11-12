@@ -1,6 +1,6 @@
 import heapq
 from collections import deque
-from detect_tree import is_DAG
+from detect_DAG import is_DAG
 from graph import Graph
 
 def solve_none_bfs(G: Graph) -> int:
@@ -123,12 +123,75 @@ def solve_alternate(G: Graph) -> bool:
             q.append(state)
     return False
 
-def _kahn_topological_sort(G):
-    pass
+def _kahn_topological_sort(G: Graph, adj: dict):
+    """
+    Compute topological order of the vertices in input DAG G using Kahn's Algorithm.
+    """
+    # Get in-degrees and adjacency list
+    in_degrees = G.get_in_degrees()
+
+    # Initialize queue with all zero in-degree
+    in_degree_zero = [v for v, d in in_degrees.items() if d == 0]
+    q = deque(in_degree_zero)
+
+    # Initialize ordering
+    order = []
+
+    # Process queue to build the ordering
+    while q:
+
+        # Get next instance in queue and add to order
+        u = q.popleft()
+        order.append(u)
+
+        # Iterate over u's neighbors
+        for v in adj.get(u, []):
+
+            # Decrement v's degree
+            in_degrees[v] -= 1
+
+            # If v's in-degree is now zero, add to queue
+            if in_degrees[v] == 0:
+                q.append(v)
+
+    # Check if length of order is correct
+    if len(order) != G.n:
+        raise ValueError('Graph contains a cycle and cannot be topologically sorted.')
+    
+    return order
 
 def solve_many(G: Graph) -> int | str:
     # Check if not a DAG
     if not is_DAG(G): # We cannot solve these
         return '?'
+    
+    # Get adjacency list
+    adj = G.get_adjacency_list()
+
+    # Define weight function, w(u) == 1 if red, else 0
+    def w(u):
+        return int(G.is_red(u))
 
     # Compute topological order using kahn's algorithm
+    order = _kahn_topological_sort(G, adj)
+
+    # Initialize distance dict L, L(s) = w(s) and L(-inf) for all v != s
+    L = {u: w(u) if u == G.s else -float('inf') for u in G.V}
+
+    # Iterate through vertices in topological order to get edges
+    for u in order:
+
+        # Iterate through u's neighbors to update L
+        for v in adj.get(u, []):
+            L[v] = max(L[v], L[u] + w(v))
+
+    # L[t] is now the maximum number of red vertices on any path
+    max_red = L[G.t]
+
+    # If max red is still -inf, t is unreachable and we return -1
+    if max_red == -float('inf'):
+        return '-1'
+    
+    return max_red
+        
+
