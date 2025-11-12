@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-from utils import Graph
+from graph import Graph
 from algorithms import *
 
 DATA_PATH = 'red-scare/data'
