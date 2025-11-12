@@ -53,8 +53,14 @@ print("="*80 + "\n")
 results = sorted(results, key = lambda x: x['instance_name'])
 
 for result in results:
-    print(f"{result['instance_name']:30} | N={result['N'] or 'N/A':>4} | S={result['S'] or 'N/A':>5} | "
-          f"F={result['F'] or 'N/A':>4} | M={result['M'] or 'N/A':>4} | A={result['A'] or 'N/A':>5}")
+    n_val = 'N/A' if result['N'] is None else result['N']
+    s_val = 'N/A' if result['S'] is None else result['S']
+    f_val = 'N/A' if result['F'] is None else result['F']
+    m_val = 'N/A' if result['M'] is None else result['M']
+    a_val = 'N/A' if result['A'] is None else result['A']
+
+    print(f"{result['instance_name']:30} | N={n_val:>4} | S={s_val:>5} | "
+          f"F={f_val:>4} | M={m_val:>4} | A={a_val:>5}")
 
 # Create DataFrame and optionally save to CSV
 results_df = pd.DataFrame(results)
