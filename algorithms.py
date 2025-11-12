@@ -1,6 +1,6 @@
 import heapq
-from collections import deque, defaultdict
-from utils import Graph
+from collections import deque
+from graph import Graph
 
 def solve_none_bfs(G: Graph) -> int:
     """
@@ -13,6 +13,9 @@ def solve_none_bfs(G: Graph) -> int:
         int: Length of the shortest path avoiding red vertices.
                 Returns -1 if no such path exists.
     """
+    # Get adjacency list
+    adj = G.get_adjacency_list()
+
     # Build queue and distance dict
     q = deque([G.s])
     dist = {G.s: 0}
@@ -21,7 +24,7 @@ def solve_none_bfs(G: Graph) -> int:
         u = q.popleft()        
         if u == G.t:            
             return dist[u]
-        for v in G.adj[u]:            
+        for v in adj[u]:            
             if v in dist:                
                 continue
             if G.is_red(v) and v != G.t:                
@@ -41,6 +44,9 @@ def solve_some_bfs(G: Graph) -> bool:
         bool: True if any path exists passing through at least one red vertex,
                 else False.
     """
+    # Get adjacency list
+    adj = G.get_adjacency_list()
+
     start_seen_red = G.is_red(G.s)
 
     q = deque([(G.s, start_seen_red)])
@@ -53,7 +59,7 @@ def solve_some_bfs(G: Graph) -> bool:
         if u == G.t and seen_red:
             return True
 
-        for v in G.adj[u]:
+        for v in adj[u]:
             next_seen_red = seen_red or (v in G.R)
 
             state = (v, next_seen_red)
@@ -67,6 +73,9 @@ def solve_some_bfs(G: Graph) -> bool:
 
 # Cost 1 if arriving at red node
 def solve_few(G):
+    # Get adjacency list
+    adj = G.get_adjacency_list()
+
     INF = 10**18
     distance = {v: INF for v in G.V}
     distance[G.s] = 1 if G.is_red(G.s) else 0
@@ -83,7 +92,7 @@ def solve_few(G):
             return current_cost
         
         # try to look for a better distance
-        for v in G.adj[u]:
+        for v in adj[u]:
             new_cost = current_cost + (1 if G.is_red(v) else 0)
             if new_cost < distance[v]: # found better
                 distance[v] = new_cost
@@ -92,6 +101,9 @@ def solve_few(G):
     return -1  # end node unreachable
 
 def solve_alternate(G: Graph) -> bool:
+    # Get adjacency list
+    adj = G.get_adjacency_list()
+
     start_red = G.s in G.R
     q = deque([(G.s, start_red)])
     seen = {(G.s, start_red)}
@@ -99,7 +111,7 @@ def solve_alternate(G: Graph) -> bool:
         u, last_red = q.popleft()
         if u == G.t:
             return True
-        for v in G.adj[u]:
+        for v in adj[u]:
             v_red = v in G.R
             if v_red == last_red:
                 continue
