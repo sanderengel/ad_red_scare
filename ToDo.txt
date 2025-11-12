@@ -1,0 +1,19 @@
+None (Done)
+    BFS
+
+Alternative
+    Biparte graph with same colour edges deleted
+    BFS
+
+Few (currently working: Richard)
+    Dijkstra's with 0/1 edgewheights
+
+Some (Np-hard) (currently working: Jonas, Lukas, Abukabar)
+    network flow
+
+Many (currently working: Michaela, Sander)
+    Detect Tree (Sander)
+    Tree with DP (Michaela)
+
+
+    
