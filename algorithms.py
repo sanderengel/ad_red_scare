@@ -1,7 +1,7 @@
 import heapq
 from collections import deque
-from detect_DAG import is_DAG
 from graph import Graph
+from network_flow import FlowNetwork
 
 def solve_none_bfs(G: Graph) -> int:
     """
@@ -34,44 +34,6 @@ def solve_none_bfs(G: Graph) -> int:
             q.append(v)
     return -1
 
-def solve_some_bfs(G: Graph) -> bool:
-    """
-    Standard solver for the Some problem.
-
-    Args:
-        G (Graph): utils.Graph object.
-
-    Returns:
-        bool: True if any path exists passing through at least one red vertex,
-                else False.
-    """
-    # Get adjacency list
-    adj = G.get_adjacency_list()
-
-    start_seen_red = G.is_red(G.s)
-
-    q = deque([(G.s, start_seen_red)])
-    visited = {(G.s, start_seen_red)}
-
-    while q:
-        u, seen_red = q.popleft()
-
-        # if we reached t and we've seen a red somewhere on the path → success
-        if u == G.t and seen_red:
-            return True
-
-        for v in adj[u]:
-            next_seen_red = seen_red or (v in G.R)
-
-            state = (v, next_seen_red)
-            if state in visited:
-                continue
-            visited.add(state)
-            q.append(state)
-
-    # exhausted search, no s→t path that went through a red
-    return False
-
 # Cost 1 if arriving at red node
 def solve_few(G):
     # Get adjacency list
@@ -101,7 +63,7 @@ def solve_few(G):
 
     return -1  # end node unreachable
 
-def solve_alternate(G: Graph) -> bool:
+def solve_alternate(G: Graph) -> str:
     # Get adjacency list
     adj = G.get_adjacency_list()
 
@@ -111,7 +73,7 @@ def solve_alternate(G: Graph) -> bool:
     while q:
         u, last_red = q.popleft()
         if u == G.t:
-            return True
+            return 'true'
         for v in adj[u]:
             v_red = v in G.R
             if v_red == last_red:
@@ -121,12 +83,10 @@ def solve_alternate(G: Graph) -> bool:
                 continue
             seen.add(state)
             q.append(state)
-    return False
+    return 'false'
 
 def _kahn_topological_sort(G: Graph, adj: dict):
-    """
-    Compute topological order of the vertices in input DAG G using Kahn's Algorithm.
-    """
+    """Compute topological order of the vertices in input DAG G using Kahn's Algorithm."""
     # Get in-degrees and adjacency list
     in_degrees = G.get_in_degrees()
 
@@ -160,30 +120,28 @@ def _kahn_topological_sort(G: Graph, adj: dict):
     
     return order
 
-def solve_many(G: Graph) -> int | str:
-    # Check if not a DAG
-    if not is_DAG(G): # We cannot solve these
-        return '?'
-    
-    # Get adjacency list
+def solve_many_DAG(G: Graph) -> int | str:
     adj = G.get_adjacency_list()
 
+    # Try to get topological order
+    # If G has a cycle, will return ValueError
+    try:
+        order = _kahn_topological_sort(G, adj)
+    except ValueError:
+        # G is cyclic, so we cannot solve many
+        return '?'
+    
     # Define weight function, w(u) == 1 if red, else 0
     def w(u):
         return int(G.is_red(u))
 
-    # Compute topological order using kahn's algorithm
-    order = _kahn_topological_sort(G, adj)
-
     # Initialize distance dict L, L(s) = w(s) and L(-inf) for all v != s
     L = {u: w(u) if u == G.s else -float('inf') for u in G.V}
 
-    # Iterate through vertices in topological order to get edges
-    for u in order:
-
-        # Iterate through u's neighbors to update L
-        for v in adj.get(u, []):
-            L[v] = max(L[v], L[u] + w(v))
+    for u in order:                  # Iterate through vertices in topological order to get edges
+        if L[u] != -float('inf'):    # Skip unreachable vertices
+            for v in adj.get(u, []): # Iterate through u's neighbors to update L
+                L[v] = max(L[v], L[u] + w(v))
 
     # L[t] is now the maximum number of red vertices on any path
     max_red = L[G.t]
@@ -194,4 +152,80 @@ def solve_many(G: Graph) -> int | str:
     
     return max_red
         
+def _is_reachable(G: Graph, s, t) -> bool:
+    # Simple BFS on original graph G
+    visited = set([s])
+    q = [s]
+    adj = G.get_adjacency_list()
+    while q:
+        u = q.pop(0)
+        if u == t:
+            return True
+        for v in adj[u]:
+            if v not in visited:
+                visited.add(v)
+                q.append(v)
+    return False
 
+def solve_some_undirected(G: Graph) -> str:
+    # Check if s or t are red, we just need any path from s to t
+    if G.is_red(G.s) or G.is_red(G.t):
+        if _is_reachable(G, G.s, G.t):
+            return 'true'
+        return 'false'
+    
+    # Get adjacency list
+    adj = G.get_adjacency_list()
+
+    # Build network flow
+    # We have two nodes every vertex in G, plus a super sink
+    n_flow_nodes = 2 * G.n + 1
+    super_sink = 2 * G.n
+    fn = FlowNetwork(n_flow_nodes)
+
+    # Base edges
+    base_edges = []
+
+    # Function creates indices for in and out vertices
+    vertex_map = {u: i for i, u in enumerate(G.V)} # Create int map (coordinate compression)
+    def in_out_idx(u) -> int:
+        u_idx = vertex_map[u]
+        return 2 * u_idx, 2 * u_idx + 1
+
+    # Internal edges (u_in -> u_out)
+    for u in G.V:
+        u_in_idx, u_out_idx = in_out_idx(u)
+        base_edges.append((u_in_idx, u_out_idx))
+
+    # Graph edges (undirected u-v turns to directed flow edges)
+    for u, v in G.E:
+        u_in_idx, u_out_idx = in_out_idx(u)
+        v_in_idx, v_out_idx = in_out_idx(v)
+        base_edges.append((u_out_idx, v_in_idx))
+        base_edges.append((v_out_idx, u_in_idx))
+
+    # Add connection to super sink 
+    _, s_out_idx = in_out_idx(G.s)
+    _, t_out_idx = in_out_idx(G.t)
+    fn.add_edge(s_out_idx, super_sink, cap = 1)
+    fn.add_edge(t_out_idx, super_sink, cap = 1)
+
+    # Iterate over every red vertex candidate
+    for r in G.R:
+        if r == G.s or r == G.t:
+            continue # Handled in first check
+
+        # If degree < 2, it's a dead end and cannot support two disjoint paths
+        if len(adj[r]) < 2:
+            continue
+
+        # Reset flow from previous iteration
+        fn.reset_flow()
+
+        # Run max flow
+        # Source is r_out (2 * r + 1)
+        _, r_out_idx = in_out_idx(r)
+        if fn.max_flow(r_out_idx, super_sink) >= 2:
+            return 'true'
+        
+    return 'false'
