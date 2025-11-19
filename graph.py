@@ -4,12 +4,12 @@ from utils import read_input
 
 class Graph:
     def __init__(self, file_path):
-        n, m, r, s, t, V, R, E = read_input(file_path)
+        n, m, r, s, t, V, R, E, directed = read_input(file_path)
         filename = os.path.basename(file_path)
 
-        # Define instance name and type
+        # Define instance name and if directed
         self.instance_name = os.path.splitext(filename)[0]
-        self.type = self.instance_name.split('-')[0]
+        self.directed = directed
 
         # Define standard attributes
         self.n = n

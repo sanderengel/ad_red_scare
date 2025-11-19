@@ -18,16 +18,18 @@ def read_input(file_path, as_sets = True):
             raise ValueError('Len of R does not match value of r')
         
         edge_lines = [tuple(infile.readline().split()) for _ in range(m)]
+        directed = True
         E = []
         for e in edge_lines:
             u, arrow, v = e
             E.append((u, v))
             if arrow == '--':
                 E.append((v, u))
+                directed = False
 
         if as_sets:
             V = set(V)
             R = set(R)
             E = set(E)
 
-        return n, m, r, s, t, V, R, E
+        return n, m, r, s, t, V, R, E, directed
