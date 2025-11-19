@@ -10,7 +10,7 @@ November 2025
 ## Installation
 It is recommended to clone this project and run it in a **virtual environment**.
 
-1. **Clone** the repository
+1. **Clone** the repository:
 ```bash
 git clone https://github.com/sanderengel/ad_red_scare
 ```
