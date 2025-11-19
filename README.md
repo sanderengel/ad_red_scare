@@ -5,12 +5,17 @@ November 2025
 
 ## Requirements
 - Python 3.13+
-- Libraries defined in requirements.txt
+- Libraries defined in `requirements.txt`
 
 ## Installation
-It is recommended to run this project in a **virtual environment**.
+It is recommended to clone this project and run it in a **virtual environment**.
 
-1. Create and activate a **virtual environment**:
+1. **Clone** the repository
+```bash
+git clone https://github.com/sanderengel/ad_red_scare
+```
+
+2. Create and activate a **virtual environment**:
 ```bash
 # Windows
 python -m venv .venv
@@ -19,9 +24,9 @@ python -m venv .venv
 # macOS/Linux
 python3 -m venv .venv
 source .venv/bin/activate
-````
+```
 
-2. Intall **dependencies**:
+3. Intall **dependencies**:
 ```bash
 pip install -r requirements.txt
 ```
