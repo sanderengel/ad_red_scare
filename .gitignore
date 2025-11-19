@@ -1,4 +1,4 @@
 .venv
 *.pdf
 __pycache__/
-results.csv
+results.*
