@@ -27,7 +27,7 @@ for idx, file_path in enumerate(file_paths, 1):
         few_result = solve_few(G)
         many_result = solve_many(G)
         none_result = solve_none_bfs(G)
-        some_result = solve_some_bfs(G)
+        some_result = solve_some_flow(G)
         result = {
             'instance_name': G.instance_name,
             'n': G.n,
@@ -62,9 +62,9 @@ for result in results:
     print(f"{result['instance_name']:30} | N={n_val:>4} | S={s_val:>5} | "
           f"F={f_val:>4} | M={m_val:>4} | A={a_val:>5}")
 
-# Create DataFrame and optionally save to CSV
+# Create DataFrame and optionally save to txt
 results_df = pd.DataFrame(results)
-results_df.to_csv('results.csv', index=False)
-print(f"\nResults saved to results.csv")
+results_df.to_csv('results.txt', index=False)
+print(f"\nResults saved to results.txt")
 
 
