@@ -26,11 +26,11 @@ for idx, file_path in enumerate(file_paths, 1):
         few_result = solve_few(G)
         none_result = solve_none_bfs(G)
 
-        many_result = some_result = '?' # Initialize many and some as unsolvable
+        many_result = some_result = '?!' # Initialize many and some as unsolvable
         if G.directed:
-            # Try to solve using DP, will return '?' internally if cyclic
+            # Try to solve using DP, will return '?!' internally if cyclic
             many_result = solve_many_DAG(G)
-            if many_result != '?':
+            if many_result != '?!':
                 # If we got a valid solution for many, use it to infer solution for some
                 some_result = str(isinstance(many_result, int) and many_result > 0).lower() # Returns str 'true' or 'false'
         else:

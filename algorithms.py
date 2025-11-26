@@ -129,7 +129,7 @@ def solve_many_DAG(G: Graph) -> int | str:
         order = _kahn_topological_sort(G, adj)
     except ValueError:
         # G is cyclic, so we cannot solve many
-        return '?'
+        return '?!'
     
     # Define weight function, w(u) == 1 if red, else 0
     def w(u):

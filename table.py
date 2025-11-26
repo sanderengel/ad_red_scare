@@ -22,7 +22,7 @@ LABEL_PATTERNS = {
     'S': [r'\bS\b', r'\bSome\b'],
 }
 
-VALUE_RE_TEMPLATE = r'{}\s*[:=]?\s*([^\s,;]+)'
+VALUE_RE_TEMPLATE = r'{}\s*[:=]?!\s*([^\s,;]+)'
 
 def extract_value(line: str, label_patterns: List[str]) -> str:
     for pat in label_patterns:
